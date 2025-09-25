@@ -2,8 +2,9 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Helper function to generate a token
+// Helper function to generate a standard, flat token
 const generateToken = (id) => {
+  // The payload is just { id }, which is the standard
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
@@ -32,6 +33,7 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+      // Send back the user object and a standard token
       res.status(201).json({
         user: {
           _id: user._id,
@@ -60,6 +62,7 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      // Send back the user object and a standard token
       res.json({
         user: {
           _id: user._id,

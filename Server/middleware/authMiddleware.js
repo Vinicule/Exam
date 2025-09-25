@@ -15,8 +15,8 @@ const protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token (don't include the password)
-      req.user = await User.findById(decoded.user.id).select('-password');
+      // Get user from the token using the correct path to the ID 
+      req.user = await User.findById(decoded.id).select('-password');
 
       next();
     } catch (error) {
@@ -34,6 +34,7 @@ const isAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
   } else {
+    // Note: 403 Forbidden is more appropriate than 401 Unauthorized for role issues
     res.status(403).json({ message: 'Not authorized as an admin' });
   }
 };

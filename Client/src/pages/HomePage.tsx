@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReservationModal from '../components/ReservationModal';
 
 // Define the type for a single resource object
 interface IResource {
@@ -12,6 +13,9 @@ interface IResource {
 const HomePage: React.FC = () => {
   const [resources, setResources] = useState<IResource[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedResource, setSelectedResource] = useState<IResource | null>(null);
 
   useEffect(() => {
     const fetchResources = async () => {
@@ -39,11 +43,22 @@ const HomePage: React.FC = () => {
     fetchResources();
   }, []);
 
+    // Functions to handle modal visibility ***
+  const handleOpenModal = (resource: IResource) => {
+    setSelectedResource(resource);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedResource(null);
+  };
+
   if (loading) {
     return <h2 className="loading-text">Loading...</h2>;
   }
 
-  return (
+ return (
     <div>
       <h2>Available Resources</h2>
       {resources.length === 0 ? (
@@ -55,10 +70,19 @@ const HomePage: React.FC = () => {
               <h3>{resource.name}</h3>
               <p>Type: {resource.type}</p>
               <p>${resource.hourlyRate.toFixed(2)} / hour</p>
+              <button className="btn" onClick={() => handleOpenModal(resource)}>
+                Reserve
+              </button>
             </li>
           ))}
         </ul>
       )}
+      
+      <ReservationModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        resource={selectedResource}
+      />
     </div>
   );
 };
