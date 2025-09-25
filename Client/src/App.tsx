@@ -4,8 +4,11 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProtectedRoute from './components/ProtectedRoute'; // *** NEW: Import ProtectedRoute ***
-import PublicRoute from './components/PublicRoute';   // *** NEW: Import PublicRoute ***
+import MyReservationsPage from './pages/MyReservationsPage';
+import AdminReservationsPage from './pages/AdminReservationsPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
+import AdminRoute from './components/AdminRoute';
 
 // Import the main stylesheet
 import './App.css';
@@ -17,7 +20,7 @@ const App: React.FC = () => {
         <Navbar />
         <main className="app-container">
           <Routes>
-            {/* Protected Routes: Only accessible when logged in */}
+            {/* Protected Routes */}
             <Route
               path="/"
               element={
@@ -26,8 +29,18 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route 
+              path="/my-reservations" 
+              element={<ProtectedRoute><MyReservationsPage /></ProtectedRoute>} 
+            />
+            
+            {/* Admin-only Route */}
+            <Route 
+              path="/admin/reservations"
+              element={<AdminRoute><AdminReservationsPage /></AdminRoute>}
+            />
 
-            {/* Public Routes: Only accessible when logged out */}
+            {/* Public Routes */}
             <Route
               path="/login"
               element={
