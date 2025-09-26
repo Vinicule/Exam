@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuthContext } from '../hooks/useAuthContext';
+import EditReservationModal from '../components/EditReservationModal';
 
 interface IReservation {
   _id: string;
@@ -17,6 +18,9 @@ const MyReservationsPage: React.FC = () => {
   const [reservations, setReservations] = useState<IReservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { token } = useAuthContext();
+  
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [reservationToEdit, setReservationToEdit] = useState<IReservation | null>(null);
 
   const fetchReservations = async () => {
     // This function can be defined outside useEffect to be reusable
@@ -62,6 +66,17 @@ const MyReservationsPage: React.FC = () => {
     }
   };
 
+    // *** NEW: Handlers for Edit Modal ***
+  const handleOpenEditModal = (reservation: IReservation) => {
+    setReservationToEdit(reservation);
+    setIsEditModalOpen(true);
+  };
+  
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setReservationToEdit(null);
+  };
+
 
   if (loading) return <p className="loading-text">Loading reservations...</p>;
 
@@ -84,18 +99,34 @@ const MyReservationsPage: React.FC = () => {
               <p>Status: <strong>{res.status}</strong></p>
               {/* *** NEW: Add Cancel Button conditionally *** */}
               {(res.status === 'pending' || res.status === 'confirmed') && (
-                <button 
-                    className="btn" 
-                    style={{backgroundColor: '#e74c3c'}}
+              <button
+                        className="btn"
+                        style={{ marginRight: '0.5rem' }}
+                        onClick={() => handleOpenEditModal(res)}
+                    >
+                        Edit
+                    </button>
+                )}
+
+                {(res.status === 'pending' || res.status === 'confirmed') && (
+                    <button 
+                    className="btn btn-danger" 
                     onClick={() => handleCancel(res._id)}
-                >
-                    Cancel
-                </button>
+                    >
+                    Cancel Reservation
+                    </button>
               )}
             </li>
           ))}
         </ul>
       )}
+
+    <EditReservationModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onUpdate={fetchReservations}
+        reservation={reservationToEdit}
+      />
     </div>
   );
 };

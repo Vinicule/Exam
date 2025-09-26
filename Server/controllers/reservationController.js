@@ -1,6 +1,7 @@
 const Reservation = require('../models/Reservation');
 const Resource = require('../models/Resource');
 
+
 // @desc    Create a new reservation
 // @route   POST /api/reservations
 // @access  Private
@@ -125,10 +126,60 @@ const deleteReservation = async (req, res) => {
     }
 };
 
+// Update a user's own reservation
+// @desc    Update a reservation
+// @route   PUT /api/reservations/:id
+// @access  Private
+const updateMyReservation = async (req, res) => {
+    try {
+        const { startTime, endTime } = req.body;
+        const reservation = await Reservation.findById(req.params.id);
+
+        if (!reservation) {
+            return res.status(404).json({ message: 'Reservation not found' });
+        }
+
+        // --- Security Check: Make sure the user owns this reservation ---
+        if (reservation.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'User not authorized' });
+        }
+
+        // --- Check for booking conflicts for the new times ---
+        const existingReservation = await Reservation.findOne({
+            resource: reservation.resource,
+            _id: { $ne: req.params.id }, // Exclude the current reservation from the check
+            $or: [
+                { startTime: { $lt: endTime }, endTime: { $gt: startTime } },
+            ],
+            status: { $in: ['pending', 'confirmed'] }
+        });
+
+        if (existingReservation) {
+            return res.status(400).json({ message: 'Resource is already booked for this new time period' });
+        }
+
+        // --- Update the reservation ---
+        reservation.startTime = startTime || reservation.startTime;
+        reservation.endTime = endTime || reservation.endTime;
+        // Optionally reset status to pending upon update
+        reservation.status = 'pending'; 
+
+        const updatedReservation = await reservation.save();
+        res.json(updatedReservation);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+
+
 module.exports = {
   createReservation,
   getMyReservations,
   getAllReservations,
   updateReservationStatus,
   deleteReservation,
+  updateMyReservation,
 };
