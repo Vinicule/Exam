@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReservationModal from '../components/ReservationModal';
+import { Link } from 'react-router-dom';
+
 
 // Define the type for a single resource object
 interface IResource {
@@ -67,12 +69,22 @@ const HomePage: React.FC = () => {
         <ul className="resource-list">
           {resources.map((resource: IResource) => (
             <li key={resource._id} className="resource-card">
+              {/* --- FIX: Content is no longer wrapped in a single Link --- */}
               <h3>{resource.name}</h3>
               <p>Type: {resource.type}</p>
               <p>${resource.hourlyRate.toFixed(2)} / hour</p>
-              <button className="btn" onClick={() => handleOpenModal(resource)}>
-                Reserve
-              </button>
+
+              <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                {/* FIX: A dedicated button for viewing details */}
+                <Link to={`/resource/${resource._id}`}>
+                  <button className="btn">View Details</button>
+                </Link>
+
+                {/* --- FIX: A separate button for reserving --- */}
+                <button className="btn" onClick={() => handleOpenModal(resource)}>
+                  Reserve
+                </button>
+              </div>
             </li>
           ))}
         </ul>

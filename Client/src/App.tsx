@@ -6,9 +6,12 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MyReservationsPage from './pages/MyReservationsPage';
 import AdminReservationsPage from './pages/AdminReservationsPage';
+import AdminEquipmentPage from './pages/AdminEquipmentPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import AdminRoute from './components/AdminRoute';
+import ResourceDetailPage from './pages/ResourceDetailPage';
+
 
 // Import the main stylesheet
 import './App.css';
@@ -34,12 +37,21 @@ const App: React.FC = () => {
               element={<ProtectedRoute><MyReservationsPage /></ProtectedRoute>} 
             />
             
-            {/* Admin-only Route */}
+            {/* Admin-only Routes */}
             <Route 
               path="/admin/reservations"
               element={<AdminRoute><AdminReservationsPage /></AdminRoute>}
             />
+            <Route 
+              path="/admin/equipment"
+              element={<AdminRoute><AdminEquipmentPage /></AdminRoute>}
+            />
 
+            <Route
+              path="/resource/:id"
+              element={<ProtectedRoute><ResourceDetailPage /></ProtectedRoute>}
+            />
+            
             {/* Public Routes */}
             <Route
               path="/login"

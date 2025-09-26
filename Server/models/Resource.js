@@ -5,7 +5,6 @@ const resourceSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true,
     },
     type: {
       type: String,
@@ -13,16 +12,24 @@ const resourceSchema = new mongoose.Schema(
       enum: ['VM', 'GPU'],
     },
     details: {
-      vcpu: { type: Number, required: true },
-      ramGB: { type: Number, required: true },
-      storageGB: { type: Number, required: true },
-      gpuModel: { type: String }, // Optional, for GPU types
+      vcpu: { type: Number },
+      ramGB: { type: Number },
+      storageGB: { type: Number },
+      gpuModel: { type: String },
     },
+    // This status is for availability (e.g., in use, maintenance)
     status: {
       type: String,
       required: true,
       enum: ['available', 'in-use', 'maintenance'],
       default: 'available',
+    },
+    // *** NEW: This status is for visibility (published/draft) ***
+    publishStatus: {
+        type: String,
+        required: true,
+        enum: ['published', 'draft'],
+        default: 'published',
     },
     hourlyRate: {
       type: Number,
@@ -35,3 +42,4 @@ const resourceSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('Resource', resourceSchema);
+

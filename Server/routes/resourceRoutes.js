@@ -1,22 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createResource,
   getResources,
+  getAllResourcesForAdmin,
   getResourceById,
+  createResource,
   updateResource,
   deleteResource,
 } = require('../controllers/resourceController');
 const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-// Route to get all resources (public) and create a resource (admin)
-router.route('/').get(getResources).post(protect, isAdmin, createResource);
+// Public route to get published resources
+router.route('/').get(getResources);
 
-// Routes for a single resource 
+// Admin-only route to get ALL resources (including drafts)
+router.route('/all-for-admin').get(protect, isAdmin, getAllResourcesForAdmin);
+
+// Routes for creating a new resource (admin) and getting a single resource (public)
 router
-  .route('/:id')
-  .get(getResourceById)
-  .put(protect, isAdmin, updateResource)
-  .delete(protect, isAdmin, deleteResource);
+    .route('/')
+    .post(protect, isAdmin, createResource);
+    
+router
+    .route('/:id')
+    .get(getResourceById)
+    .put(protect, isAdmin, updateResource)
+    .delete(protect, isAdmin, deleteResource);
+
 
 module.exports = router;
