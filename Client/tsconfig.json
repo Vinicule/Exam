@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    /* include vitest global to avoid import it in each test file */
+    "types": ["vitest/globals"]
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

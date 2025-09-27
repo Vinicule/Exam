@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuthContext } from '../hooks/useAuthContext';
-import EditResourceModal from '../components/EditResourceModal'; // *** FIX: Added the missing import ***
+import EditResourceModal from '../components/EditResourceModal';
 
 interface IResource {
   _id: string;
@@ -17,15 +17,14 @@ const AdminEquipmentPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { token } = useAuthContext();
 
-  // Form state for creating a new resource
   const [name, setName] = useState('');
   const [type, setType] = useState<'VM' | 'GPU'>('VM');
   const [hourlyRate, setHourlyRate] = useState('');
   const [vcpu, setVcpu] = useState('');
   const [ramGB, setRamGB] = useState('');
   const [storageGB, setStorageGB] = useState('');
+  const [description, setDescription] = useState('');
 
-  // State for Edit Modal
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [resourceToEdit, setResourceToEdit] = useState<IResource | null>(null);
 
@@ -60,19 +59,20 @@ const AdminEquipmentPage: React.FC = () => {
         name, 
         type, 
         hourlyRate: parseFloat(hourlyRate), 
-        details 
+        details,
+        description,
       };
 
       await axios.post('/api/resources', newResourceData, config);
       alert('Resource created successfully!');
       
-      // Reset form
       setName('');
       setType('VM');
       setHourlyRate('');
       setVcpu('');
       setRamGB('');
       setStorageGB('');
+      setDescription('');
       fetchResources();
     } catch (error: any) {
       console.error('Failed to create resource', error);
@@ -94,7 +94,6 @@ const AdminEquipmentPage: React.FC = () => {
     }
   };
   
-  // Handlers for Edit Modal
   const handleOpenEditModal = (resource: IResource) => {
     setResourceToEdit(resource);
     setIsEditModalOpen(true);
@@ -109,7 +108,7 @@ const AdminEquipmentPage: React.FC = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await axios.put(`/api/resources/${resourceId}`, { publishStatus: newStatus }, config);
-      fetchResources(); // Refresh the list
+      fetchResources();
     } catch (error) {
       console.error('Failed to update status', error);
       alert('Error updating status.');
@@ -123,14 +122,13 @@ const AdminEquipmentPage: React.FC = () => {
       <div className="auth-form-container" style={{maxWidth: '800px'}}>
         <h2>Create New Equipment</h2>
         <form onSubmit={handleCreate}>
-          {/* ... form fields ... */}
           <div className="form-group">
-            <label>Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+            <label htmlFor="name">Name</label>
+            <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label>Type</label>
-            <select value={type} onChange={(e) => setType(e.target.value as 'VM' | 'GPU')}>
+            <label htmlFor="type">Type</label>
+            <select id="type" value={type} onChange={(e) => setType(e.target.value as 'VM' | 'GPU')}>
               <option value="VM">VM</option>
               <option value="GPU">GPU</option>
             </select>
@@ -138,22 +136,31 @@ const AdminEquipmentPage: React.FC = () => {
           {(type === 'VM' || type === 'GPU') && (
             <>
               <div className="form-group">
-                <label>vCPUs</label>
-                <input type="number" value={vcpu} onChange={(e) => setVcpu(e.target.value)} required />
+                <label htmlFor="vcpu">vCPUs</label>
+                <input id="vcpu" type="number" value={vcpu} onChange={(e) => setVcpu(e.target.value)} required />
               </div>
               <div className="form-group">
-                <label>RAM (GB)</label>
-                <input type="number" value={ramGB} onChange={(e) => setRamGB(e.target.value)} required />
+                <label htmlFor="ramGB">RAM (GB)</label>
+                <input id="ramGB" type="number" value={ramGB} onChange={(e) => setRamGB(e.target.value)} required />
               </div>
               <div className="form-group">
-                <label>Storage (GB)</label>
-                <input type="number" value={storageGB} onChange={(e) => setStorageGB(e.target.value)} required />
+                <label htmlFor="storageGB">Storage (GB)</label>
+                <input id="storageGB" type="number" value={storageGB} onChange={(e) => setStorageGB(e.target.value)} required />
               </div>
             </>
           )}
           <div className="form-group">
-            <label>Hourly Rate ($)</label>
-            <input type="number" step="0.01" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} required />
+            <label htmlFor="hourlyRate">Hourly Rate ($)</label>
+            <input id="hourlyRate" type="number" step="0.01" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} required />
+          </div>
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+            />
           </div>
           <button type="submit" className="auth-button">Create Equipment</button>
         </form>
@@ -166,6 +173,7 @@ const AdminEquipmentPage: React.FC = () => {
             <th>Name</th>
             <th>Type</th>
             <th>Hourly Rate</th>
+            <th>Status</th>
             <th>Publish Status</th>
             <th>Actions</th>
           </tr>
@@ -187,19 +195,20 @@ const AdminEquipmentPage: React.FC = () => {
                 </select>
               </td>
               <td>
-                 <button
-                  className="btn"
-                  style={{marginRight: '0.5rem'}}
-                  onClick={() => handleOpenEditModal(res)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(res._id)}
-                >
-                  Delete
-                </button>
+                <div className="table-actions-cell">
+                  <button
+                    className="btn"
+                    onClick={() => handleOpenEditModal(res)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(res._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

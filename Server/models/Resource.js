@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
+const Reservation = require('./Reservation');
 
 const resourceSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+    },
+    description: {
+      type: String,
+      required: false, // Make it optional
+      default: '',
     },
     type: {
       type: String,
@@ -17,14 +23,12 @@ const resourceSchema = new mongoose.Schema(
       storageGB: { type: Number },
       gpuModel: { type: String },
     },
-    // This status is for availability (e.g., in use, maintenance)
     status: {
       type: String,
       required: true,
       enum: ['available', 'in-use', 'maintenance'],
       default: 'available',
     },
-    // *** NEW: This status is for visibility (published/draft) ***
     publishStatus: {
         type: String,
         required: true,
@@ -41,5 +45,15 @@ const resourceSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Resource', resourceSchema);
+// Middleware to automatically delete reservations
+resourceSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+  try {
+    await Reservation.deleteMany({ resource: this._id });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
+
+module.exports = mongoose.model('Resource', resourceSchema);

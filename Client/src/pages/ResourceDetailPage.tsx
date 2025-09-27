@@ -7,6 +7,7 @@ import ReservationModal from '../components/ReservationModal';
 interface IResourceDetails {
   _id: string;
   name: string;
+  description: string;
   type: 'VM' | 'GPU';
   hourlyRate: number;
   status: string;
@@ -22,8 +23,6 @@ const ResourceDetailPage: React.FC = () => {
   const [resource, setResource] = useState<IResourceDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams<{ id: string }>();
-
-  // State for managing the reservation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -45,7 +44,6 @@ const ResourceDetailPage: React.FC = () => {
   if (loading) return <p className="loading-text">Loading details...</p>;
   if (!resource) return <p>Resource not found. <Link to="/">Go back home</Link></p>;
 
-  // A simplified version of the resource for the modal prop
   const resourceForModal = {
       _id: resource._id,
       name: resource.name,
@@ -53,28 +51,38 @@ const ResourceDetailPage: React.FC = () => {
 
   return (
     <>
-      <div className="detail-container">
-        <div className="detail-header">
-          <h1>{resource.name}</h1>
-          <p>Status: <strong>{resource.status}</strong></p>
-        </div>
+      <div className="app-container">
+        <div className="detail-container">
+          <div className="detail-header">
+            <div>
+              <h1>{resource.name}</h1>
+              <p className="detail-status">Status: <strong>{resource.status}</strong></p>
+            </div>
+          </div>
 
-        <h2>Specifications</h2>
-        <div className="detail-specs">
-          <div className="spec-item"><strong>Type</strong><span>{resource.type}</span></div>
-          <div className="spec-item"><strong>Hourly Rate</strong><span>${resource.hourlyRate.toFixed(2)}</span></div>
-          {resource.details.vcpu && <div className="spec-item"><strong>vCPUs</strong><span>{resource.details.vcpu}</span></div>}
-          {resource.details.ramGB && <div className="spec-item"><strong>RAM (GB)</strong><span>{resource.details.ramGB}</span></div>}
-          {resource.details.storageGB && <div className="spec-item"><strong>Storage (GB)</strong><span>{resource.details.storageGB}</span></div>}
-        </div>
+          <h2>Specifications</h2>
+          <div className="detail-specs">
+            <div className="spec-item"><strong>Type</strong><span>{resource.type}</span></div>
+            <div className="spec-item"><strong>Hourly Rate</strong><span>${resource.hourlyRate.toFixed(2)}</span></div>
+            {resource.details.vcpu && <div className="spec-item"><strong>vCPUs</strong><span>{resource.details.vcpu}</span></div>}
+            {resource.details.ramGB && <div className="spec-item"><strong>RAM (GB)</strong><span>{resource.details.ramGB}</span></div>}
+            {resource.details.storageGB && <div className="spec-item"><strong>Storage (GB)</strong><span>{resource.details.storageGB}</span></div>}
+            {resource.details.gpuModel && <div className="spec-item"><strong>GPU Model</strong><span>{resource.details.gpuModel}</span></div>}
+          </div>
+          {resource.description && (
+            <div className="detail-description">
+              <p>{resource.description}</p>
+            </div>
+          )}
 
-        <div className="detail-actions">
-          <Link to="/">
-            <button className="btn">Back to All Resources</button>
-          </Link>
-          <button className="btn" onClick={() => setIsModalOpen(true)}>
-            Reserve This Item
-          </button>
+          <div className="detail-actions">
+            <Link to="/">
+              <button className="btn">Back to Resources</button>
+            </Link>
+            <button className="auth-button" onClick={() => setIsModalOpen(true)}>
+              Reserve This Item
+            </button>
+          </div>
         </div>
       </div>
 

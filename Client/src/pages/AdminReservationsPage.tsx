@@ -7,11 +7,11 @@ interface IAdminReservation {
   user: {
     _id: string;
     name: string;
-  };
+  } | null; // Allow user to be null
   resource: {
     _id: string;
     name: string;
-  };
+  } | null; // Allow resource to be null
   startTime: string;
   endTime: string;
   status: string;
@@ -53,7 +53,6 @@ const AdminReservationsPage: React.FC = () => {
             },
           };
         await axios.put(`/api/reservations/${reservationId}/status`, { status: newStatus }, config);
-        // Refresh the list to show the change
         fetchReservations();
     } catch (error) {
         console.error('Failed to update status', error);
@@ -66,38 +65,44 @@ const AdminReservationsPage: React.FC = () => {
   return (
     <div>
       <h2>Admin Dashboard: All Reservations</h2>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Resource</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reservations.map((res) => (
-            <tr key={res._id}>
-              <td>{res.user.name}</td>
-              <td>{res.resource.name}</td>
-              <td>{new Date(res.startTime).toLocaleString()}</td>
-              <td>{new Date(res.endTime).toLocaleString()}</td>
-              <td>
-                <select 
-                    value={res.status} 
-                    onChange={(e) => handleStatusChange(res._id, e.target.value)}
-                >
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="completed">Completed</option>
-                </select>
-              </td>
+      {!reservations || reservations.length === 0 ? (
+        <p>There are currently no reservations in the system.</p>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Resource</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {reservations.map((res) => (
+              <tr key={res._id}>
+                {/* *** FIX: Use optional chaining to prevent crash if user is null *** */}
+                <td>{res.user?.name || '[Deleted User]'}</td>
+                {/* *** FIX: Use optional chaining to prevent crash if resource is null *** */}
+                <td>{res.resource?.name || '[Deleted Resource]'}</td>
+                <td>{new Date(res.startTime).toLocaleString()}</td>
+                <td>{new Date(res.endTime).toLocaleString()}</td>
+                <td>
+                  <select 
+                      value={res.status} 
+                      onChange={(e) => handleStatusChange(res._id, e.target.value)}
+                  >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="completed">Completed</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

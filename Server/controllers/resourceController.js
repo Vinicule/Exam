@@ -48,7 +48,7 @@ const getResourceById = async (req, res) => {
 // @access  Private/Admin
 const createResource = async (req, res) => {
   try {
-    const { name, type, details, hourlyRate } = req.body;
+    const { name, type, details, hourlyRate, description } = req.body;
 
     if (!name || !type || !hourlyRate || parseFloat(hourlyRate) <= 0) {
         return res.status(400).json({ message: 'Please provide a valid name, type, and a positive hourly rate.' });
@@ -58,15 +58,15 @@ const createResource = async (req, res) => {
       name,
       type,
       details: details || {},
-      status: 'available', // Default status on creation
-      publishStatus: 'published', // Default publish status
+      status: 'available',
+      publishStatus: 'published',
       hourlyRate,
+      description: description || '', 
     });
 
     const createdResource = await resource.save();
     res.status(201).json(createdResource);
   } catch (error) {
-    console.error('Error in createResource:', error.message);
     res.status(500).send('Server Error');
   }
 };
