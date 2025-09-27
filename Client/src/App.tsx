@@ -16,43 +16,77 @@ import ResourceDetailPage from './pages/ResourceDetailPage';
 // Import the main stylesheet
 import './App.css';
 
+const ProtectedContentWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="app-container">
+      {children}
+    </div>
+  );
+}
+
 const App: React.FC = () => {
   return (
     <Router>
       <div>
         <Navbar />
-        <main className="app-container">
+
+        <main className="main-content-flow"> 
           <Routes>
-            {/* Protected Routes */}
+            {/* Protected Routes - Wrap these in ProtectedContentWrapper */}
             <Route
               path="/"
               element={
                 <ProtectedRoute>
-                  <HomePage />
+                  <ProtectedContentWrapper>
+                    <HomePage />
+                  </ProtectedContentWrapper>
                 </ProtectedRoute>
               }
             />
             <Route 
               path="/my-reservations" 
-              element={<ProtectedRoute><MyReservationsPage /></ProtectedRoute>} 
+              element={
+                <ProtectedRoute>
+                  <ProtectedContentWrapper>
+                    <MyReservationsPage />
+                  </ProtectedContentWrapper>
+                </ProtectedRoute>
+              } 
             />
             
-            {/* Admin-only Routes */}
+            {/* Admin Routes - Wrap these in ProtectedContentWrapper */}
             <Route 
               path="/admin/reservations"
-              element={<AdminRoute><AdminReservationsPage /></AdminRoute>}
+              element={
+                <AdminRoute>
+                  <ProtectedContentWrapper>
+                    <AdminReservationsPage />
+                  </ProtectedContentWrapper>
+                </AdminRoute>
+              }
             />
             <Route 
               path="/admin/equipment"
-              element={<AdminRoute><AdminEquipmentPage /></AdminRoute>}
+              element={
+                <AdminRoute>
+                  <ProtectedContentWrapper>
+                    <AdminEquipmentPage />
+                  </ProtectedContentWrapper>
+                </AdminRoute>
+              }
             />
 
             <Route
               path="/resource/:id"
-              element={<ProtectedRoute><ResourceDetailPage /></ProtectedRoute>}
+              element={
+                <ProtectedRoute>
+                  <ProtectedContentWrapper>
+                    <ResourceDetailPage />
+                  </ProtectedContentWrapper>
+                </ProtectedRoute>
+              }
             />
-            
-            {/* Public Routes */}
+            {/* Public Routes - No wrapper needed */}
             <Route
               path="/login"
               element={

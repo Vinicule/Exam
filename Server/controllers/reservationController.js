@@ -54,13 +54,13 @@ const createReservation = async (req, res) => {
 // @route   GET /api/reservations/myreservations
 // @access  Private
 const getMyReservations = async (req, res) => {
-    try {
-        const reservations = await Reservation.find({ user: req.user.id }).populate('resource', 'name type hourlyRate');
-        res.json(reservations);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server Error' });
-    }
+  try {
+    const reservations = await Reservation.find({ user: req.user.id }).populate("resource");
+    // Always return an array, even if empty
+    return res.json(reservations || []);
+  } catch (error) {
+    return res.status(500).json({ error: "Server error" });
+  }
 };
 
 // Get all reservations (Admin)

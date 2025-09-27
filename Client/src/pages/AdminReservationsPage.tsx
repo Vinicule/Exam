@@ -81,14 +81,12 @@ const AdminReservationsPage: React.FC = () => {
           <tbody>
             {reservations.map((res) => (
               <tr key={res._id}>
-                {/* *** FIX: Use optional chaining to prevent crash if user is null *** */}
-                <td>{res.user?.name || '[Deleted User]'}</td>
-                {/* *** FIX: Use optional chaining to prevent crash if resource is null *** */}
-                <td>{res.resource?.name || '[Deleted Resource]'}</td>
-                <td>{new Date(res.startTime).toLocaleString()}</td>
-                <td>{new Date(res.endTime).toLocaleString()}</td>
-                <td>
-                  <select 
+                <td data-label="User">{res.user?.name || '[Deleted User]'}</td> 
+                <td data-label="Resource">{res.resource?.name || '[Deleted Resource]'}</td> 
+                <td data-label="Start Time">{new Date(res.startTime).toLocaleString()}</td> 
+                <td data-label="End Time">{new Date(res.endTime).toLocaleString()}</td> 
+                <td data-label="Status">
+                  <select
                       value={res.status} 
                       onChange={(e) => handleStatusChange(res._id, e.target.value)}
                   >

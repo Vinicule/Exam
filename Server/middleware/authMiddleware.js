@@ -17,7 +17,8 @@ const protect = async (req, res, next) => {
 
       // Get user from the token using the correct path to the ID 
       req.user = await User.findById(decoded.id).select('-password');
-
+      req.user.id = req.user._id.toString();
+      
       next();
     } catch (error) {
       console.error(error);

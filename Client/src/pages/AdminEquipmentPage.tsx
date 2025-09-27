@@ -119,7 +119,7 @@ const AdminEquipmentPage: React.FC = () => {
 
   return (
     <div>
-      <div className="auth-form-container" style={{maxWidth: '800px'}}>
+      <div className="auth-form-container admin-page-form" style={{maxWidth: '800px'}}>
         <h2>Create New Equipment</h2>
         <form onSubmit={handleCreate}>
           <div className="form-group">
@@ -128,7 +128,7 @@ const AdminEquipmentPage: React.FC = () => {
           </div>
           <div className="form-group">
             <label htmlFor="type">Type</label>
-            <select id="type" value={type} onChange={(e) => setType(e.target.value as 'VM' | 'GPU')}>
+            <select className= "admin-select" id="type" value={type} onChange={(e) => setType(e.target.value as 'VM' | 'GPU')}>
               <option value="VM">VM</option>
               <option value="GPU">GPU</option>
             </select>
@@ -181,11 +181,11 @@ const AdminEquipmentPage: React.FC = () => {
         <tbody>
           {resources.map((res) => (
             <tr key={res._id}>
-              <td>{res.name}</td>
-              <td>{res.type}</td>
-              <td>${res.hourlyRate.toFixed(2)}</td>
-              <td>{res.status}</td>
-              <td>
+              <td data-label="Name">{res.name}</td>
+              <td data-label="Type">{res.type}</td>
+              <td data-label="Hourly Rate">${res.hourlyRate.toFixed(2)}</td>
+              <td data-label="Status">{res.status}</td>
+              <td data-label="Publish Status">
                 <select 
                     value={res.publishStatus} 
                     onChange={(e) => handleStatusChange(res._id, e.target.value as 'published' | 'draft')}
@@ -194,7 +194,7 @@ const AdminEquipmentPage: React.FC = () => {
                     <option value="draft">Draft</option>
                 </select>
               </td>
-              <td>
+              <td data-label="Actions"> 
                 <div className="table-actions-cell">
                   <button
                     className="btn"
