@@ -13,8 +13,8 @@ This is a mockup system built for an academic assignment. The application does n
 | **Frontend**  | React, React Router                                |
 | **Backend**   | Node.js, Express.js                                |
 | **Database**  | MongoDB with Mongoose                              |
-| **Testing**   | Jest, React Testing Library (to be implemented)    |
-| **Styling**   | (e.g., Tailwind CSS, Material-UI - to be decided)  |
+| **Testing**   | Vitest, React Testing Library (to be implemented)  |
+| **Styling**   | CSS                                                |
 
 ---
 
@@ -22,12 +22,10 @@ This is a mockup system built for an academic assignment. The application does n
 
 The system supports two distinct user roles with specific permissions. Access to all features requires user authentication.
 
-#### **All Users**
-- Can view the catalog of available VM and GPU configurations.
-- Can view the detailed specifications (vCPUs, RAM, Storage, GPU Model) of each configuration.
-
 #### **Simple User**
 - Can register for a new account and log in.
+- Can view the catalog of available VM and GPU configurations.
+- Can view the detailed specifications (vCPUs, RAM, Storage, GPU Model) of each configuration.
 - Can view a personal dashboard listing their active and pending rental requests.
 - Can create a new rental request for a specific resource configuration.
 - Can update the details of a pending request.
@@ -36,7 +34,7 @@ The system supports two distinct user roles with specific permissions. Access to
 #### **Administrator**
 - Can add new VM/GPU configurations to the system catalog.
 - Can update the specifications of existing configurations.
-- Can change the status of a configuration (e.g., `available`, `maintenance`).
+- Can change the status of a configuration (e.g., `published`, `draft`).
 - Can view all rental requests from all users.
 - Can approve or reject pending rental requests.
 - Can manually terminate an active rental.
@@ -57,7 +55,7 @@ Follow these instructions to run the project on your local machine.
 
 ### **Prerequisites**
 - [Node.js](https://nodejs.org/) (v18.x or later recommended)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [npm](https://www.npmjs.com/)
 - [Git](https://git-scm.com/)
 - [MongoDB](https://www.mongodb.com/try/download/community) installed and running locally, or a connection string from MongoDB Atlas.
 
