@@ -26,22 +26,20 @@ const MyReservationsPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [reservationToEdit, setReservationToEdit] = useState<IReservation | null>(null);
   
-  // New state for confirmation modal (to replace window.confirm)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [reservationToCancel, setReservationToCancel] = useState<string | null>(null); 
 
 
   const fetchReservations = async () => {
-    // This function can be defined outside useEffect to be reusable
     try {
-      setError(null); // Clear previous errors
+      setError(null);
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
       const { data } = await axios.get<IReservation[]>('/api/reservations/myreservations', config);
-        setReservations(Array.isArray(data) ? data : []);
+      setReservations(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch reservations', error);
       setError('Failed to load reservations. Please try logging in again.');
@@ -55,16 +53,13 @@ const MyReservationsPage: React.FC = () => {
       setLoading(true);
       fetchReservations();
     }
-    // Dependency array includes token, so it fetches when auth is ready
-  }, [token]); 
+  }, [token]);
   
-  // Handler to initiate cancellation confirmation
   const handleConfirmCancel = (reservationId: string) => {
       setReservationToCancel(reservationId);
       setIsConfirmModalOpen(true);
   };
   
-  // Handle reservation cancellation execution
   const handleCancel = async () => {
     if (!reservationToCancel) return;
 
@@ -76,10 +71,8 @@ const MyReservationsPage: React.FC = () => {
           };
         await axios.delete(`/api/reservations/${reservationToCancel}`, config);
         setReservations(prev => prev.filter(res => res._id !== reservationToCancel));
-        console.log('Reservation cancelled.'); 
     } catch (error) {
         console.error('Failed to cancel reservation', error);
-        console.log('Could not cancel the reservation.'); 
     } finally {
         setIsConfirmModalOpen(false);
         setReservationToCancel(null);
@@ -97,30 +90,19 @@ const MyReservationsPage: React.FC = () => {
   };
 
   if (loading) return <p className="loading-text">Loading reservations...</p>;
-  
-  // Display error message if fetching failed
   if (error) return <p className="loading-text" style={{ color: 'var(--color-danger)' }}>{error}</p>;
+
+  // This check ensures there's at least one valid reservation to show
+  const hasValidReservations = reservations?.some(res => res.resource && res.resource.name);
 
   return (
     <div>
       <h2>My Reservations</h2>
-      {(!reservations || reservations.length === 0) ? (
-        // This is the message that displays when no reservations are found
-        <div className="no-reservations-message">
-        <p>You have no reservations.</p>
-        <Link to="/">
-        <button className="auth-button" style={{ width: 'auto', padding: '0.8rem 1.75rem' }}>
-            Make a new reservation
-        </button>
-        </Link>
-        </div>
-            ) : error ? (
-            <p className="loading-text" style={{ color: 'var(--color-danger)' }}>{error}</p>
-            ) : (
+      {hasValidReservations ? (
         <ul className="reservation-list">
           {reservations.map((res) => {
+            // Filter out any malformed reservations before rendering
             if (!res.resource || !res.resource.name || !res._id) {
-                console.error('Skipping malformed reservation:', res);
                 return null;
             }
             
@@ -135,30 +117,37 @@ const MyReservationsPage: React.FC = () => {
                 </p>
                 <p>Status: <strong>{res.status}</strong></p>
                 
-                {/* Add Edit Button conditionally */}
                 {(res.status === 'pending' || res.status === 'confirmed') && (
-                <button
-                          className="btn"
-                          style={{ marginRight: '0.5rem' }}
-                          onClick={() => handleOpenEditModal(res)}
-                      >
-                          Edit
-                      </button>
-                  )}
+                  <button
+                    className="btn"
+                    style={{ marginRight: '0.5rem' }}
+                    onClick={() => handleOpenEditModal(res)}
+                  >
+                    Edit
+                  </button>
+                )}
 
-                  {/* Add Cancel Button conditionally */}
-                  {(res.status === 'pending' || res.status === 'confirmed') && (
-                      <button 
-                          className="btn btn-danger" 
-                          onClick={() => handleConfirmCancel(res._id)} // Changed handler to open confirmation modal
-                      >
-                          Cancel Reservation
-                      </button>
+                {(res.status === 'pending' || res.status === 'confirmed') && (
+                  <button 
+                    className="btn btn-danger" 
+                    onClick={() => handleConfirmCancel(res._id)}
+                  >
+                    Cancel Reservation
+                  </button>
                 )}
               </li>
             );
           })}
         </ul>
+      ) : (
+        <div className="no-reservations-message">
+          <p>You have no reservations.</p>
+          <Link to="/">
+            <button className="auth-button" style={{ width: 'auto', padding: '0.8rem 1.75rem' }}>
+              Make a new reservation
+            </button>
+          </Link>
+        </div>
       )}
 
       <EditReservationModal

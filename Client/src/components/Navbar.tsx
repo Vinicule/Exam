@@ -1,37 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 const Navbar: React.FC = () => {
   const { user, dispatch } = useAuthContext();
+  const [isOpen, setIsOpen] = useState(false); // State to manage the mobile menu
 
   const handleLogout = () => {
     dispatch({ type: 'LOGOUT' });
+    setIsOpen(false); // Close menu on logout
   };
 
+  // Helper function to close the menu, used by links
+  const closeMenu = () => setIsOpen(false);
+
   return (
-    <nav className="navbar">
+    // Add a class to the nav when the menu is open for hamburger animation
+    <nav className={`navbar ${isOpen ? 'nav-open' : ''}`}>
       <h1>
-        <Link to="/" style={{ color: '#ecf0f1', textDecoration: 'none' }}>Cloud Rental</Link>
+        <Link to="/" onClick={closeMenu} style={{ color: '#ecf0f1', textDecoration: 'none' }}>Cloud Rental</Link>
       </h1>
-      <ul className="nav-links">
+
+      {/* Hamburger Menu Button */}
+      <button className="hamburger-menu" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+        <span />
+        <span />
+        <span />
+      </button>
+
+      {/* Add a class to the nav links when the menu is open */}
+      <ul className={`nav-links ${isOpen ? 'nav-active' : ''}`}>
         {user ? (
           <>
-            {/* Admin-only links */}
             {user.role === 'admin' && (
               <>
                 <li>
-                  <Link to="/admin/reservations">Admin Dashboard</Link>
+                  <Link to="/admin/reservations" onClick={closeMenu}>Admin Dashboard</Link>
                 </li>
                 <li>
-                  <Link to="/admin/equipment">Manage Equipment</Link>
+                  <Link to="/admin/equipment" onClick={closeMenu}>Manage Equipment</Link>
                 </li>
               </>
             )}
 
-            {/* Links for all logged-in users */}
             <li>
-              <Link to="/my-reservations">My Reservations</Link>
+              <Link to="/my-reservations" onClick={closeMenu}>My Reservations</Link>
             </li>
             <li>
               <span>Hello, {user.name}</span>
@@ -42,12 +55,11 @@ const Navbar: React.FC = () => {
           </>
         ) : (
           <>
-            {/* Links for guests */}
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login" onClick={closeMenu}>Login</Link>
             </li>
             <li>
-              <Link to="/register">Register</Link>
+              <Link to="/register" onClick={closeMenu}>Register</Link>
             </li>
           </>
         )}
