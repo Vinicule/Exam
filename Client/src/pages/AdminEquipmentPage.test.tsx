@@ -66,7 +66,7 @@ describe('AdminEquipmentPage Component', () => {
     (mockedAxios.post as Mock).mockResolvedValue({ data: { message: 'Created' } });
     renderWithAdminAuth();
 
-    // Act: *** FIX: Wait for the form to be available after loading ***
+    // Act:Wait for the form to be available after loading 
     await screen.findByRole('heading', { name: /Create New Equipment/i });
 
     // Act: Fill out the creation form
@@ -118,7 +118,7 @@ describe('AdminEquipmentPage Component', () => {
     (mockedAxios.put as Mock).mockResolvedValue({ data: { message: 'Updated' } });
     renderWithAdminAuth();
 
-    // Act: *** FIX: Find the specific row and then the combobox within it ***
+    // Act:Find the specific row and then the combobox within it 
     const row = await screen.findByRole('row', { name: /Test GPU/i });
     const statusSelect = within(row).getByRole('combobox');
     await user.selectOptions(statusSelect, 'published');

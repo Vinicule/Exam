@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
         password,
       });
 
-      // *** NEW: Add this line for debugging ***
+      //debugging 
       console.log('Data received from backend:', data); 
 
       // Dispatch LOGIN action with user and token
@@ -25,7 +25,6 @@ const LoginPage: React.FC = () => {
       
       navigate('/');
     } catch (error: any) { // Type error as 'any' to access response property
-      // *** NEW: More detailed error logging ***
       console.error('Login error details:', error.response?.data || error.message);
     }
   };

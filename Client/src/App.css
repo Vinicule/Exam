@@ -1,7 +1,6 @@
 /* === MODERN DARK THEME === */
 
 :root {
-  /* ... (variables remain the same) ... */
   --color-primary: #3498db;
   --color-primary-dark: #2980b9;
   --color-primary-light-bg: rgba(52, 152, 219, 0.1);
@@ -20,7 +19,6 @@
 }
 
 /* === BASE & GLOBAL BACKGROUND === */
-/* Find and replace your existing body block with this one */
 body {
   margin: 0;
   font-family: var(--font-family);

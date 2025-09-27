@@ -11,7 +11,7 @@ interface IResource {
   status: string;
   publishStatus: 'published' | 'draft';
 }
-
+// Admin Equipment Management Page
 const AdminEquipmentPage: React.FC = () => {
   const [resources, setResources] = useState<IResource[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

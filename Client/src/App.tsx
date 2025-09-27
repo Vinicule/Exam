@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
         <main className="main-content-flow"> 
           <Routes>
-            {/* Protected Routes - Wrap these in ProtectedContentWrapper */}
+            {/* Protected Routes - Wrapped in ProtectedContentWrapper */}
             <Route
               path="/"
               element={
@@ -54,7 +54,7 @@ const App: React.FC = () => {
               } 
             />
             
-            {/* Admin Routes - Wrap these in ProtectedContentWrapper */}
+            {/* Admin Routes - Wrapped in ProtectedContentWrapper */}
             <Route 
               path="/admin/reservations"
               element={

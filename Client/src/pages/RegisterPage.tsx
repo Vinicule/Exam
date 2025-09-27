@@ -11,9 +11,7 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-
-    // *** FIX: This is the missing logic that the test is looking for ***
+    
     if (password !== confirmPassword) {
       alert('Passwords do not match!');
       return; // This stops the function if passwords don't match

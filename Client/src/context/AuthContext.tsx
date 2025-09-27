@@ -12,7 +12,7 @@ interface AuthState {
   token: string | null;
 }
 
-// FIX: Export this interface so other files can use it 
+// Export this interface so other files can use it 
 export interface AuthContextType extends AuthState {
   dispatch: React.Dispatch<any>;
 }

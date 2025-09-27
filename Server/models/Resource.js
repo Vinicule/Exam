@@ -9,7 +9,7 @@ const resourceSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: false, // Make it optional
+      required: false, // Optional
       default: '',
     },
     type: {
@@ -22,6 +22,7 @@ const resourceSchema = new mongoose.Schema(
       ramGB: { type: Number },
       storageGB: { type: Number },
       gpuModel: { type: String },
+      required: false, // Optional
     },
     status: {
       type: String,

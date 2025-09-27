@@ -35,7 +35,7 @@ const isAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
   } else {
-    // Note: 403 Forbidden is more appropriate than 401 Unauthorized for role issues
+    // Note: 403 Forbidden is more appropriate than 401 Unauthorized for role issues according to HTTP standards
     res.status(403).json({ message: 'Not authorized as an admin' });
   }
 };

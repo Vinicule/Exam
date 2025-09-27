@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
   }
 
  return (
-    <div className="app-container"> {/* FIX: Wrap content in the main container */}
+    <div className="app-container"> 
       <h2>Available Resources</h2>
       {resources.length === 0 ? (
         <p className="no-resources-text">No resources available at the moment.</p>
@@ -64,7 +64,6 @@ const HomePage: React.FC = () => {
               <p>${resource.hourlyRate.toFixed(2)} / hour</p>
               <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
                 <Link to={`/resource/${resource._id}`}>
-                  {/* FIX: Use the .btn class for consistent styling */}
                   <button className="btn">View Details</button>
                 </Link>
                 <button className="btn" onClick={() => handleOpenModal(resource)}>
